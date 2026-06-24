@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David Hilbert — the program, and the infinite hotel</title>
+<meta name="description" content="LOGIKĒ XVII — David Hilbert (1862–1943). The most influential mathematician of his era set the agenda the whole foundations crisis answered: his PROGRAM demanded mathematics be proven complete, consistent, and decidable by finite means, and his 23 problems (1900) — including the Entscheidungsproblem — steered the century. Gödel, Church, and Turing then proved the program could not be fulfilled — and in failing it, invented computer science. Live: Hilbert's Hotel, the paradox of the infinite (a full hotel with room for infinitely many more). Honest: the program failed, but its failure was more fruitful than success; and his school was destroyed by the Nazis. David Lee Wise, two-layer honest.">
+<style>
+  :root{--bg:#0c0f17;--panel:#121622;--panel2:#19202f;--edge:#2a3346;--ink:#ede6d6;--dim:#b3ad9a;--faint:#7c7660;
+    --ochre:#d9b66a;--ochre2:#f0d79a;--proof:#5ad1ff;--proof2:#a7e6ff;--one:#7fe0a0;--zero:#fb7185;--amber:#fbbf24;--ember:#fb923c;
+    --mono:'SFMono-Regular',ui-monospace,'Cascadia Code',Menlo,Consolas,monospace;--serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--serif);line-height:1.58;background-image:radial-gradient(1100px 560px at 75% -10%,#1c2436 0%,transparent 55%),radial-gradient(900px 500px at 0% 100%,#14110a 0%,transparent 55%);}
+  .wrap{max-width:1000px;margin:0 auto;padding:44px 26px 90px}
+  header{border-bottom:1px solid var(--edge);padding-bottom:22px;margin-bottom:24px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ochre);opacity:.95}
+  h1{font-family:Georgia,serif;font-size:38px;line-height:1.08;margin:.3em 0 .14em;font-weight:600}h1 em{color:var(--ochre2);font-style:italic}
+  .who{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.04em}
+  .sub{color:var(--dim);font-size:16px;max-width:74ch;margin-top:14px}.sub b{color:var(--ink)}
+  .verdicts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:22px 0}@media(max-width:720px){.verdicts{grid-template-columns:1fr}}
+  .vc{border:1px solid var(--edge);border-radius:11px;padding:13px 15px;border-top-width:3px;background:rgba(18,22,34,.6)}
+  .vc .badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em}
+  .vc.s{border-top-color:var(--one)}.vc.s .badge{color:var(--one)} .vc.m{border-top-color:var(--amber)}.vc.m .badge{color:var(--amber)} .vc.f{border-top-color:var(--ember)}.vc.f .badge{color:var(--ember)}
+  .vc p{font-size:12px;color:var(--dim);margin:6px 0 0;line-height:1.45}.vc p b{color:var(--ink)}
+  section{margin:36px 0}
+  h2{font-size:13px;font-family:var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--ochre2);border-left:2px solid var(--ochre);padding-left:11px;margin:0 0 6px}
+  .lede{color:var(--dim);font-size:15px;margin:0 0 18px;max-width:80ch}
+  .panel{background:linear-gradient(180deg,var(--panel),#0a0d14);border:1px solid var(--edge);border-radius:14px;padding:20px;box-shadow:0 24px 60px -40px #000}
+  .controls{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:14px}
+  button{font-family:var(--mono);font-size:12px;color:var(--ink);background:#1a2030;border:1px solid var(--edge);border-radius:8px;padding:8px 13px;cursor:pointer}button:hover{background:#222b3e;border-color:var(--ochre)}
+  .hotel{display:flex;gap:7px;align-items:flex-end;overflow-x:auto;padding:8px 2px 4px}
+  .room{flex:0 0 auto;width:54px;text-align:center}
+  .door{height:60px;border:1px solid var(--edge);border-radius:7px 7px 4px 4px;background:#0c1622;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;color:var(--one);position:relative;transition:.25s}
+  .door.free{background:#241f12;border-color:var(--ochre);color:var(--ochre2)}
+  .door.new{background:#0d1a12;border-color:#2f5b40;color:var(--proof2)}
+  .rnum{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:4px}
+  .inf{flex:0 0 auto;align-self:center;font-family:var(--mono);color:var(--faint);font-size:18px;padding:0 4px}
+  .note{color:var(--dim);font-size:13.5px;border-left:2px solid var(--edge);padding-left:13px;margin:16px 0 0}.note b{color:var(--ink)}
+  .status{font-family:var(--mono);font-size:12px;color:var(--proof2);text-align:center;min-height:20px;margin-top:8px}
+  .thm{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}@media(max-width:620px){.thm{grid-template-columns:1fr}}
+  .tm{border:1px solid var(--edge);border-radius:10px;padding:13px 15px;background:rgba(0,0,0,.14)}.tm b{color:var(--ochre2);font-family:var(--mono);font-size:11px}.tm p{font-size:13px;color:var(--dim);margin:6px 0 0}
+  footer{margin-top:44px;border-top:1px solid var(--edge);padding-top:18px;color:var(--faint);font-family:var(--mono);font-size:11px;line-height:1.7}
+  footer a,.bar2 a{color:var(--ochre)}.bar2{font-family:var(--mono);font-size:11.5px;margin-bottom:16px}.bar2 a{text-decoration:none;border-bottom:1px dotted #4a4126}
+  code{font-family:var(--mono);color:var(--ochre2);background:#15120a;padding:1px 5px;border-radius:5px}
+  blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--ochre);color:var(--ink);font-style:italic;font-size:15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="bar2"><a href="https://davidwise01.github.io/ud0/">◄ UD0</a> &nbsp; <a href="https://davidwise01.github.io/alonzo-church/">← Church</a> &nbsp; LOGIKĒ · XVII · the foundations rank</div>
+<header>
+  <div class="kicker">LOGIKĒ · XVII · the program, and the infinite hotel</div>
+  <h1>David <em>Hilbert</em></h1>
+  <div class="who">1862 – 1943 · Königsberg &amp; Göttingen · "Wir müssen wissen — wir werden wissen" (we must know — we will know)</div>
+  <div class="sub">If this domain has a final boss, it is Hilbert — because nearly every result in it was an answer to a question <em>he</em> posed. The towering mathematician of his age, he set the twentieth century's agenda with <b>23 problems</b> in 1900, and he dreamed the boldest dream in the history of logic: <b>Hilbert's program</b> — to put all of mathematics on an unshakable footing by proving it <em>complete</em> (every truth provable), <em>consistent</em> (no contradictions), and <em>decidable</em> (a mechanical procedure settling any statement), all by safe, finite reasoning. Gödel, Church, and Turing would prove the dream impossible — and, in proving it, would invent computer science. His program failed more productively than almost anything in history has succeeded.</div>
+</header>
+<div class="verdicts">
+  <div class="vc s"><span class="badge">✓ STRONG</span><p><b>Monumental and foundational.</b> The axiomatic method, the 23 problems, the rigorous re-grounding of geometry, Hilbert spaces — Hilbert shaped the architecture of modern mathematics and physics as much as any one person could.</p></div>
+  <div class="vc m"><span class="badge">◐ THE PROGRAM FAILED</span><p><b>His specific dream was impossible.</b> Gödel (1931) killed completeness &amp; provable self-consistency; Church &amp; Turing (1936) killed decidability. Math can't be all three. But the failure <em>birthed computability theory</em>.</p></div>
+  <div class="vc f"><span class="badge">◔ "WE WILL KNOW" — NOT ALL</span><p><b>His optimism was half wrong.</b> His epitaph promises no unknowables; yet there are true-but-unprovable and undecidable statements. The quest for total knowledge was unreachable — and built the computer on the way.</p></div>
+</div>
+
+<section>
+  <h2>I · Hilbert's Hotel — a full house with infinite vacancy</h2>
+  <p class="lede">To teach how strange Cantor's infinity is, Hilbert imagined a hotel with <b>infinitely many rooms, every one occupied</b>. A classic "no vacancy" — yet it can take in more. One new guest? Ask each guest to shift up one room (room <code>n → n+1</code>); now <b>room 0 is empty</b>, though nobody left. A whole <em>infinite</em> busload? Ask each guest to move to <em>double</em> their room (<code>n → 2n</code>); every odd room opens up — infinitely many vacancies. Run it.</p>
+  <div class="panel">
+    <div class="controls">
+      <button id="one">+ one new guest &nbsp;(n → n+1)</button>
+      <button id="bus">+ an infinite bus &nbsp;(n → 2n)</button>
+      <button id="reset">reset (full)</button>
+    </div>
+    <div class="hotel" id="hotel"></div>
+    <div class="status" id="status">A full hotel — every room occupied. Yet there is always room for more.</div>
+    <div class="note">No guest was thrown out, the hotel never added a "last" room — yet room appeared. This only works because the rooms are <b>infinite</b>: with a finite hotel, full means full. It's the same fact behind [[georg-cantor]]'s sizes of infinity, dramatised so anyone can feel it. ⚑ Hilbert used wonder like this to recruit a generation into the foundations of mathematics.</div>
+  </div>
+  <blockquote>"We must know. We will know." <span style="color:var(--faint);font-style:normal;font-size:12px">— David Hilbert, Königsberg, 1930 (carved on his grave)</span></blockquote>
+</section>
+
+<section>
+  <h2>II · The program, and the answer it received</h2>
+  <div class="thm">
+    <div class="tm"><b>THE DREAM (1920s)</b><p>Formalise all mathematics; then prove with finite, surveyable methods that the system is <b>complete</b>, <b>consistent</b>, and <b>decidable</b>. Settle every question, forever, mechanically.</p></div>
+    <div class="tm"><b>THE VERDICT (1931–36)</b><p>[[kurt-godel]]: no — incompleteness &amp; no self-proof of consistency. [[alonzo-church]] &amp; [[alan-turing]]: no — the <em>Entscheidungsproblem</em> is undecidable. The dream cannot be had.</p></div>
+  </div>
+  <p class="lede" style="margin-top:16px">It is the great irony of this whole lineage: Hilbert asked, with total confidence, for a machine that decides all mathematical truth — and the <em>answer</em>, "no such machine exists," required mathematicians to define <b>what a machine even is</b>. That definition — Turing's machine, Church's λ — <em>is</em> the computer. Hilbert's tenth problem (a decision procedure for Diophantine equations) was answered "impossible" only in 1970; his first (the Continuum Hypothesis) turned out independent. He demanded certainty and received, instead, the precise map of certainty's <b>limits</b> — and that map became computer science. The program failed; the failure is the foundation of [[psephos-processors-domain]].</p>
+</section>
+
+<section>
+  <h2>III · The architect, and the ruin of his school</h2>
+  <p class="note" style="border-color:var(--amber)"><b style="color:var(--amber)">Gate kept on.</b> The honest reckoning is that <b>Hilbert was magnificently right about almost everything except the one thing he cared most about</b>. The axiomatic method, his rescue of Euclidean geometry from its hidden gaps (the <em>Grundlagen der Geometrie</em>, 1899), the 23 problems that organised a century, Hilbert spaces at the heart of quantum mechanics — all monumental and enduring. But his <em>formalist program</em>, the dream of a complete and self-certifying mathematics, was not merely unfinished; it was <b>proven impossible</b> by the very students and successors his questions had inspired — and he took Gödel's result hard. Yet here is the deeper honesty: this was the <b>most productive failure in the history of thought</b>. To prove "no procedure decides all of mathematics," Turing and Church had to invent the precise notion of <em>procedure</em> — and so the computer was born from the ashes of Hilbert's certainty. The man: he led Göttingen, the world's center of mathematics, and watched the Nazis <b>destroy it</b> after 1933, purging his Jewish colleagues and students; asked by a minister whether mathematics at Göttingen had suffered from "the departure of the Jews," he answered, "Suffered? It doesn't exist any longer." He died in 1943 in a city emptied of the school he built, his optimistic epitaph already half-refuted — and wholly vindicated as the question that made the modern world. [[alonzo-church]] ← · next → Łukasiewicz.</p>
+</section>
+
+<footer>
+  DAVID HILBERT · LOGIKĒ XVII · two-layer honest<br>
+  live Hilbert's Hotel (full ∞-hotel; one guest n→n+1 frees room 0; an infinite bus n→2n frees every odd room — verified mappings)<br>
+  the 23 problems (1900) · Hilbert's program (complete + consistent + decidable) · the Entscheidungsproblem · the axiomatic method &amp; Grundlagen der Geometrie · Hilbert spaces<br>
+  ← <a href="https://davidwise01.github.io/alonzo-church/">Church</a> · next → <b>Łukasiewicz</b> (many-valued logic &amp; Polish notation)<br>
+  LOGIKĒ · the lineage of logical mathematics · governor David Lee Wise · CC-BY-ND-4.0
+</footer>
+</div>
+<script>
+"use strict";
+(function(){
+  const $=id=>document.getElementById(id);
+  const SHOWN=10; // rooms 0..9 shown, then ∞
+  let rooms; // rooms[i] = guest label occupying room i (or null = free)
+  function reset(){ rooms=[]; for(let i=0;i<SHOWN;i++) rooms[i]='G'+i; draw('A full hotel — every room occupied. Yet there is always room for more.'); }
+  function draw(msg){
+    let h='';
+    for(let i=0;i<SHOWN;i++){
+      const g=rooms[i];
+      const cls = g===null?'free':(g==='NEW'||(''+g).startsWith('★')?'new':'');
+      h+='<div class="room"><div class="door '+cls+'">'+(g===null?'—':g)+'</div><div class="rnum">room '+i+'</div></div>';
+    }
+    h+='<div class="inf">… ∞</div>';
+    $('hotel').innerHTML=h;
+    if(msg) $('status').textContent=msg;
+  }
+  function oneGuest(){
+    // shift every guest n -> n+1 (within shown window), room 0 opens, place NEW
+    const next=[];
+    for(let i=0;i<SHOWN;i++) next[i] = i===0 ? null : (rooms[i-1]||null);
+    rooms=next; rooms[0]='NEW';
+    draw('Everyone moved n → n+1. Room 0 opened with no one evicted — the new guest checks in. ✓');
+  }
+  function infiniteBus(){
+    // guest in room i -> room 2i; odd rooms free; fill odds with ★ (bus guests)
+    const next=new Array(SHOWN).fill(undefined);
+    for(let i=0;i<SHOWN;i++){ const t=2*i; if(t<SHOWN && rooms[i]!=null) next[t]=rooms[i]; }
+    for(let i=0;i<SHOWN;i++){ if(i%2===1) next[i]='★'+((i-1)/2); } // bus guests into the freed odd rooms
+    for(let i=0;i<SHOWN;i++){ if(next[i]===undefined) next[i]=null; }
+    rooms=next;
+    draw('Everyone moved n → 2n. Every odd room opened — an entire infinite busload (★) checks in at once. ✓');
+  }
+  $('one').onclick=oneGuest;
+  $('bus').onclick=infiniteBus;
+  $('reset').onclick=reset;
+  reset();
+})();
+</script>
+</body>
+</html>
